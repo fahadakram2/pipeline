@@ -1,0 +1,19 @@
+services:
+  backend:
+    image: backend
+    container_name: backend
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - D:/pipeline/TaskManager/backend/.env
+
+  frontend:
+    image: frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    env_file:
+      - D:/pipeline/TaskManager/frontend/.env
+    depends_on:
+      - backend

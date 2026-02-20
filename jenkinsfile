@@ -1,0 +1,82 @@
+pipeline {
+    agent any
+
+    environment {
+        // Docker image names
+        BACKEND_IMAGE = "taskmanager-backend"
+        FRONTEND_IMAGE = "taskmanager-frontend"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo "Cloning repository..."
+                checkout scm
+            }
+        }
+
+        stage('Install Backend Dependencies') {
+            steps {
+                echo "Installing backend dependencies..."
+                dir('backend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Install Frontend Dependencies') {
+            steps {
+                echo "Installing frontend dependencies..."
+                dir('frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Backend Tests') {
+            steps {
+                echo "Running backend tests..."
+                dir('backend') {
+                    sh 'npm test -- --coverage --watchAll=false'
+                }
+            }
+        }
+
+        stage('Run Frontend Tests') {
+            steps {
+                echo "Running frontend tests..."
+                dir('frontend') {
+                    sh 'npm test -- --coverage --watchAll=false'
+                }
+            }
+        }
+
+        stage('Build Backend Docker Image') {
+            steps {
+                echo "Building backend Docker image..."
+                sh "docker build -t ${BACKEND_IMAGE} ./backend"
+            }
+        }
+
+        stage('Build Frontend Docker Image') {
+            steps {
+                echo "Building frontend Docker image..."
+                sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
+            }
+        }
+
+    }
+
+    post {
+        always {
+            echo 'CI pipeline finished.'
+        }
+        success {
+            echo 'CI pipeline succeeded.'
+        }
+        failure {
+            echo 'CI pipeline failed!'
+        }
+    }
+}
