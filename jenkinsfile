@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs "NodeJs"
+    }
     environment {
         // Docker image names
         BACKEND_IMAGE = "taskmanager-backend"
