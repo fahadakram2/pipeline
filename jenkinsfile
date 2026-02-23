@@ -47,18 +47,23 @@ pipeline {
             }
         }
 
-       stage('Run Frontend Tests') {
-         steps {
-           echo "Running frontend tests..."
-           dir('frontend') {
-             // Force CI mode & exit gracefully if no tests found
-             bat """
-             set CI=true
-             npm test -- --coverage --watchAll=false --passWithNoTests
-             """
-           }
+        stage('Check Frontend Test Files') {
+            steps {
+               dir('frontend') {
+                   bat 'dir /s /b *.test.js'
+                }
+            }
         }
-    }
+
+       stage('Run Frontend Tests') {
+            steps {
+                echo "Running frontend tests..."
+                dir('frontend') {
+                    bat 'set CI=true && npm test -- --coverage --watchAll=false --passWithNoTests' // Force CI mode & exit gracefully if no tests found
+             
+                }
+            }
+        }
 
         stage('Build Backend Docker Image') {
             steps {
