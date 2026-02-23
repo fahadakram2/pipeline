@@ -4,8 +4,8 @@ pipeline {
     tools {
         nodejs "NodeJs"
     }
+
     environment {
-        // Docker image names
         BACKEND_IMAGE = "taskmanager-backend"
         FRONTEND_IMAGE = "taskmanager-frontend"
     }
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo "Installing backend dependencies..."
                 dir('backend') {
-                    sh 'npm install'
+                    bat 'npm install'
                 }
             }
         }
@@ -32,7 +32,7 @@ pipeline {
             steps {
                 echo "Installing frontend dependencies..."
                 dir('frontend') {
-                    sh 'npm install'
+                    bat 'npm install'
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 echo "Running backend tests..."
                 dir('backend') {
-                    sh 'npm test -- --coverage --watchAll=false'
+                    bat 'npm test -- --coverage --watchAll=false'
                 }
             }
         }
@@ -50,7 +50,7 @@ pipeline {
             steps {
                 echo "Running frontend tests..."
                 dir('frontend') {
-                    sh 'npm test -- --coverage --watchAll=false'
+                    bat 'npm test -- --coverage --watchAll=false'
                 }
             }
         }
@@ -58,17 +58,16 @@ pipeline {
         stage('Build Backend Docker Image') {
             steps {
                 echo "Building backend Docker image..."
-                sh "docker build -t ${BACKEND_IMAGE} ./backend"
+                bat "docker build -t %BACKEND_IMAGE% backend"
             }
         }
 
         stage('Build Frontend Docker Image') {
             steps {
                 echo "Building frontend Docker image..."
-                sh "docker build -t ${FRONTEND_IMAGE} ./frontend"
+                bat "docker build -t %FRONTEND_IMAGE% frontend"
             }
         }
-
     }
 
     post {
