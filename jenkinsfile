@@ -47,14 +47,18 @@ pipeline {
             }
         }
 
-        stage('Run Frontend Tests') {
-            steps {
-                echo "Running frontend tests..."
-                dir('frontend') {
-                    bat 'npm test -- --coverage --watchAll=false --passWithNoTests''
-                }
-            }
+       stage('Run Frontend Tests') {
+         steps {
+           echo "Running frontend tests..."
+           dir('frontend') {
+             // Force CI mode & exit gracefully if no tests found
+             bat """
+             set CI=true
+             npm test -- --coverage --watchAll=false --passWithNoTests
+             """
+           }
         }
+    }
 
         stage('Build Backend Docker Image') {
             steps {
